@@ -46,15 +46,7 @@ module.exports = function TimeStamps(dispatch){
         if (enabled) {
             if(event.channel === 26) return
             if(blocked.has(event.authorName)) return false
-            var time = new Date();
-            var tt = time.toLocaleDateString('en-US', {hour: '2-digit', minute: 'numeric', hour12: true}).slice(-2).trim();
-            var hh = time.getHours();
-            var mm = time.getMinutes(); 
-            hh = hh % 12;
-            hh = hh ? '0' + hh : 12;
-            mm = mm < 10 ? '0' + mm : mm;
-            var timeStr = `${tt} ${hh}:${mm}`;
-            event.authorName = `</a>${timeStr}][<a href='asfunction:chatNameAction,${event.authorName}@0@0'>${event.authorName}</a>`;
+            event.authorName = `</a>${getFormattedTime()}][<a href='asfunction:chatNameAction,${event.authorName}@0@0'>${event.authorName}</a>`;
             if (debug) console.log(event);
         }
         return true
@@ -63,18 +55,20 @@ module.exports = function TimeStamps(dispatch){
         if (enabled) {
             if(event.channel === 26) return
             if(blocked.has(event.authorName)) return false
-            var time = new Date();
-            var tt = time.toLocaleDateString('en-US', {hour: '2-digit', minute: 'numeric', hour12: true}).slice(-2).trim();
-            var hh = time.getHours();
-            var minutes = time.getMinutes(); 
-            hh = hh % 12;
-            hh = hh ? '0' + hh : 12;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            var timeStr = `${tt} ${hh}:${minutes}`;
-            event.name = `</a>${timeStr}][<a href='asfunction:chatNameAction,${event.name}@0@0'>${event.name}</a>`
+            event.name = `</a>${getFormattedTime()}][<a href='asfunction:chatNameAction,${event.name}@0@0'>${event.name}</a>`
             if (debug) console.log(event);
         }
         return true
+    }
+    function getFormattedTime() {
+        var time = new Date();
+        var tt = time.toLocaleDateString('en-US', {hour: '2-digit', minute: 'numeric', hour12: true}).slice(-2).trim();
+        var hh = time.getHours();
+        var mm = time.getMinutes(); 
+        hh = hh % 12;
+        hh = hh ? (hh < 10 ? '0' + hh : hh) : 12;
+        mm = mm < 10 ? '0' + mm : mm;
+        return `${tt} ${hh}:${mm}`;        
     }
     dispatch.hook('S_CHAT', 1, processChatEvent)
     dispatch.hook('S_PRIVATE_CHAT', 1, processChatEvent)
